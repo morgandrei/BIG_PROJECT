@@ -61,3 +61,6 @@ class MailingLog(models.Model):
     class Meta:
         verbose_name = 'лог рассылки'
         verbose_name_plural = 'логи рассылок'
+
+class Clients(models.Model):
+    pass
