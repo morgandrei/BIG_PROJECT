@@ -1,6 +1,22 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from users.models import User, NULLABLE
+
+class Client(models.Model):
+    """Клиент"""
+    email = models.EmailField(verbose_name='контактный email')
+    fullname = models.CharField(max_length=150, verbose_name='ФИО')
+    comment = models.TextField(verbose_name='комментарий', **NULLABLE)
+
+    user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, verbose_name='клиент', **NULLABLE)
+
+    def __str__(self):
+        return f'{self.fullname} ({self.email})'
+
+    class Meta:
+        verbose_name = 'клиент'
+        verbose_name_plural = 'клиенты'
 
 
 class Newsletter(models.Model):
