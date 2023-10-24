@@ -1,6 +1,6 @@
 from django import forms
 
-from newsletter.models import Newsletter, Version
+from newsletter.models import Newsletter, Message, Client
 
 
 class StyleFormMixin:
@@ -10,32 +10,32 @@ class StyleFormMixin:
             field.widget.attrs['class'] = 'form-control'
 
 
-class ProductsForm(StyleFormMixin, forms.ModelForm):
-    exceptional_words = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно', 'обман', 'полиция', 'радар']
-    
+class NewsletterForm(StyleFormMixin, forms.ModelForm):
     class Meta:
-        model = Products
-        exclude = ('created_at', 'updated_at', 'user')
+        model = Newsletter
+        exclude = ('user', 'is_active')
+        help_texts = {
+            'clients': 'Удерживайте “Control“ (или “Command“ на Mac), чтобы выбрать несколько значений.',
+            'status': 'Для работы рассылки, установите статус - "Создана"<br>'
+                      'Для прекращения работы рассылки, установите статус - "Завершена"'
+        }
+        widgets = {
+            'time': forms.TimeInput(attrs={'type': 'time'}, format='%H-%M'),
+            'start_date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d')
+        }
 
-    def clean_product_name(self):
-        cleaned_data = self.cleaned_data.get('product_name')
-        self.check_exceptional_words(self.exceptional_words, cleaned_data)
-        return cleaned_data
-
-    def clean_description(self):
-        cleaned_data = self.cleaned_data.get('description')
-        self.check_exceptional_words(self.exceptional_words, cleaned_data)
-        return cleaned_data
-
-    @staticmethod
-    def check_exceptional_words(exceptional_words, cleaned_data):
-        for word in exceptional_words:
-            if word in cleaned_data.lower():
-                raise forms.ValidationError(f'Нельзя использовать слово {word}!')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-class VersionForm(StyleFormMixin, forms.ModelForm):
-
+class MessageForm(StyleFormMixin, forms.ModelForm):
     class Meta:
-        model = Version
-        fields = '__all__'
+        model = Message
+        exclude = ('user',)
+
+
+class ClientForm(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = Client
+        exclude = ('user',)
+

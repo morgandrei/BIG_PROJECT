@@ -1,0 +1,85 @@
+{% extends 'newsletter/base.html' %}
+{% load my_tags %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="text-center">Добро пожаловать в сервис рассылок Sky Service</h1>
+            </div>
+        </div>
+        <br>
+        {% if user.is_authenticated %}
+            </div>
+            <div class="container my-5">
+                <div class="row">
+                    <div class="col-4">
+                        {% if perms.newsletter.add_mailing %}
+                            <div class="card w-auto">
+                                <div class="card-header">Создать Рассылку</div>
+                                <div class="card-body">
+                                    <p class="card-text">Вы можете создать новую рассылку сообщений или воспользоваться списком уже
+                                        существующих рассылок</p>
+                                    <a href="{% url 'newsletter:newsletter_create' %}" class="btn btn-primary">Создать</a>
+                                    {% if perms.newsletter.view_mailing %}
+                                        <a href="{% url 'newsletter:newsletter_list' %}" class="btn btn-outline-primary">Список рассылок</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-4">
+
+                        {% if perms.newsletter.add_message %}
+                            <div class="card w-auto">
+                                <div class="card-header">Создать Сообщение</div>
+                                <div class="card-body">
+                                    <p class="card-text">Вы можете создать сообщение для рассылки или воспользоваться списком
+                                        существующих сообщений</p>
+                                    <a href="{% url 'newsletter:message_create' %}" class="btn btn-primary">Создать</a>
+                                    {% if perms.newsletter.view_message %}
+                                        <a href="{% url 'newsletter:message_list' %}" class="btn btn-outline-primary">Список
+                                        сообщений</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-4">
+                        {% if perms.newsletter.add_client %}
+                            <div class="card">
+                                <div class="card-header">Создать Получателей</div>
+                                <div class="card-body">
+                                    <p class="card-text">Вы можете создать получателей рассылки или воспользоваться списком существующих клиентов</p>
+                                    <a href="{% url 'newsletter:client_create' %}" class="btn btn-primary">Создать</a>
+                                    {% if perms.newsletter.view_client %}
+                                        <a href="{% url 'newsletter:client_list' %}" class="btn btn-outline-primary">Список
+                                        клиентов</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        </div>
+                </div>
+            </div>
+        {% endif %}
+    <div class="container">
+        <div class="row mt-4">
+            {% for object in blog_list %}
+                <div class="col-4" style="width: 20rem;">
+                    <img src="{{ object.image }}" class="card-img-top" alt="image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ object.title }}</h5>
+                        <p class="card-text">{{ object.content|slice:100 }}</p>
+                        <p class="card-text text-muted">Количество просмотров: {{ object.views_count }}</p>
+                        <span class="text-muted">Опубликовано: {{ object.created_at }}</span>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary"
+                           href="{% url 'blog:view' object.pk %}">Просмотреть</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
