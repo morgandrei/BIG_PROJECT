@@ -3,10 +3,8 @@
 {% block content %}
 
     <div class="container">
-        <!-- Example row of columns -->
-
         <div class="row">
-            {% if perms.newsletter.add_mailing %}
+            {% if perms.newsletter.add_newsletter %}
                 <div class="col-3">
                     <a href="{% url 'newsletter:newsletter_create' %}" class="btn btn-primary">Создать рассылку</a>
                 </div>
@@ -21,7 +19,7 @@
                 <div class="card mb-4 mx-2" style="width: 20rem;">
                     <div class="card-header">Рассылка №{{ object.pk }}</div>
                     <div class="card-body">
-                        <h5 class="card-title">Название: {{ object.newsletter_name }}</h5>
+                        <h5 class="card-title">Название: {{ object.name }}</h5>
                         <p class="card-text">Дата: {{ object.start_date }}</p>
                         <p class="card-text">Время: {{ object.time }}</p>
                         <p class="card-text">Статус: {{ object.get_status_display }}</p>

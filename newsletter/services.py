@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.cache import cache
 from django.core.mail import send_mail
-from django.utils import timezone
 
 from blog.models import Blog
 from newsletter.models import Log, Newsletter, Client
