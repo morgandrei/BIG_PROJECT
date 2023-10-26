@@ -45,7 +45,7 @@ class Newsletter(models.Model):
     message = models.ForeignKey('Message', on_delete=models.CASCADE, verbose_name='сообщение')
 
     def __str__(self):
-        return f'{self.name}({self.pk}): {self.get_frequency_display()}, {self.get_status_display()}'
+        return f'{self.name}({self.pk} {self.user}'
 
     class Meta:
         verbose_name = 'рассылка'
@@ -65,7 +65,7 @@ class Message(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, verbose_name='пользователь', **NULLABLE)
 
     def __str__(self):
-        return self.subject
+        return self.subject or ''
 
     class Meta:
         verbose_name = 'письмо'

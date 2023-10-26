@@ -11,6 +11,11 @@ from newsletter.forms import NewsletterForm, MessageForm, ClientForm
 from newsletter.models import Newsletter, Message, Client, Log
 from newsletter.services import get_random_blog_article
 
+STATISTIC = {'all_newsletter': Newsletter.objects.count(),
+             'active_newsletter': Newsletter.objects.filter(is_active=True).count(),
+             'clients': Client.objects.all().values('email').distinct().count(),
+             'blog_list': get_random_blog_article(), }
+
 
 class UserQuerysetMixin:
     """Ограничивает список просматриваемых пользователем объектов, принадлежащими только текущему пользователю,
@@ -62,18 +67,7 @@ class LoginRequiredMessageMixin(LoginRequiredMixin):
 
 
 def index(request):
-    all_mailings = Newsletter.objects.count()
-    active_mailings = Newsletter.objects.filter(is_active=True,
-                                                status__in=[Newsletter.STATUS_CHOICES[0],
-                                                            Newsletter.STATUS_CHOICES[1]]).count()
-    clients = Client.objects.all().values('email').distinct().count()
-    random_blog_article = get_random_blog_article()
-    context = {
-        'all_mailings': all_mailings,
-        'active_mailings': active_mailings,
-        'clients': clients,
-        'blog_list': random_blog_article,
-    }
+    context = {**STATISTIC}
     return render(request, 'newsletter/index.html', context=context)
 
 
@@ -88,6 +82,7 @@ class ContactsView(TemplateView):
             message = self.request.POST.get('message')
             print(f'You have new message from {name}({email}): {message}')
         context_data['object_list'] = Client.objects.all()
+
         return context_data
 
 
@@ -131,14 +126,14 @@ class NewsletterDeleteView(LoginRequiredMessageMixin, PermissionRequiredMixin, U
     success_url = reverse_lazy('newsletter:newsletter_list')
 
 
-class MessageCreateView(LoginRequiredMessageMixin, PermissionRequiredMixin, UserFormMixin, CreateView):
+class MessageCreateView(LoginRequiredMixin, PermissionRequiredMixin, UserFormMixin, CreateView):
     model = Message
     form_class = MessageForm
     permission_required = 'newsletter.add_message'
     success_url = reverse_lazy('newsletter:message_list')
 
 
-class MessageUpdateView(LoginRequiredMessageMixin, PermissionRequiredMixin, UserObjectMixin, UpdateView):
+class MessageUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserObjectMixin, UpdateView):
     model = Message
     form_class = MessageForm
     permission_required = 'newsletter.change_message'
@@ -147,7 +142,7 @@ class MessageUpdateView(LoginRequiredMessageMixin, PermissionRequiredMixin, User
         return reverse('newsletter:message_detail', args=[self.kwargs.get('pk')])
 
 
-class MessageListView(LoginRequiredMessageMixin, PermissionRequiredMixin, UserQuerysetMixin, ListView):
+class MessageListView(LoginRequiredMixin, PermissionRequiredMixin, UserQuerysetMixin, ListView):
     model = Message
     permission_required = 'newsletter.view_message'
 
@@ -220,16 +215,16 @@ class LogListView(LoginRequiredMessageMixin, ListView):
         queryset = super().get_queryset()
         if self.request.user.is_staff:
             return queryset
-        return queryset.filter(mailing__user=self.request.user)
+        return queryset.filter(newsletter__user=self.request.user)
 
 
 @login_required
-def get_mailing_logs(request, pk):
+def get_newsletter_log(request, pk):
     """Получение логов принадлежащих конкретной рассылке"""
-    newsletter_logs = Log.objects.filter(newsletter_id=pk)
-    newsletter = newsletter_logs.first().newsletter
+    newsletter_log = Log.objects.filter(newsletter_id=pk)
+    newsletter = newsletter_log.first().newsletter
     context = {
-        'object_list': newsletter_logs,
-        'newsletter_name': newsletter.name
+        'object_list': newsletter_log,
+        'name': newsletter.name
     }
     return render(request, 'newsletter/newsletter_logs.html', context=context)

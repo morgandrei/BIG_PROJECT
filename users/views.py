@@ -4,6 +4,7 @@ import string
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.models import Group, Permission
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
@@ -13,6 +14,8 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
+
+from newsletter.services import add_users_group_permissions
 from users.forms import UserRegisterForm, UserProfileForm
 from users.models import User
 
@@ -28,7 +31,12 @@ class RegisterView(SuccessMessageMixin, CreateView):
         token = ''.join(random.sample(string.digits + string.ascii_letters, 12))
         self.object.token = token
         self.object.is_active = False
+        group, created = Group.objects.get_or_create(name='users')
+        if created:
+            add_users_group_permissions(group)
+
         self.object.save()
+        self.object.groups.add(group)
         url = 'http://127.0.0.1:8000/users/verify/' + token
 
         if form.is_valid():

@@ -4,7 +4,6 @@
 {% block content %}
 
     <div class="container">
-        <!-- Example row of columns -->
         <div class="row ">
             <div class="col-2">
                 <a href="{% url 'newsletter:newsletter_list' %}" class="btn btn-primary mb-3">Вернуться к списку
@@ -41,11 +40,11 @@
                         {% endif %}
                     </div>
                     <div class="card-footer text-center">
-                        {% if perms.newsletter.change_mailing %}
+                        {% if perms.newsletter.change_newsletter %}
                             <a class="card-link mx-4"
                                href="{% url 'newsletter:newsletter_update' object.pk %}">Изменить</a>
                         {% endif %}
-                        {% if perms.newsletter.delete_mailing %}
+                        {% if perms.newsletter.delete_newsletter %}
                             <a class="btn btn-danger m"
                                href="{% url 'newsletter:newsletter_delete' object.pk %}">Удалить</a>
                         {% endif %}

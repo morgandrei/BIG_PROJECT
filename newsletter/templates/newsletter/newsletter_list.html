@@ -4,13 +4,13 @@
 
     <div class="container">
         <div class="row">
-            {% if perms.newsletter.add_newsletter %}
+
                 <div class="col-3">
                     <a href="{% url 'newsletter:newsletter_create' %}" class="btn btn-primary">Создать рассылку</a>
                 </div>
-            {% endif %}
+
             <div class="col-3">
-                <a href="{% url 'newsletter:logs' %}" class="btn btn-primary">Отчет</a>
+                <a href="{% url 'newsletter:log' %}" class="btn btn-primary">Отчет</a>
             </div>
         </div>
 
@@ -32,9 +32,9 @@
                             <a class="btn btn-primary" href="{% url 'newsletter:newsletter_detail' object.pk %}">Выбрать</a>
                             {% if perms.newsletter.change_activity %}
                                 {% if object.is_active %}
-                                    <a class="btn btn-danger" href="{% url 'newsletter:mailing_toggle_activity' object.pk %}">Отключить</a>
+                                    <a class="btn btn-danger" href="{% url 'newsletter:newsletter_toggle_activity' object.pk %}">Отключить</a>
                                 {% else %}
-                                    <a class="btn btn-success" href="{% url 'newsletter:mailing_toggle_activity' object.pk %}">Включить</a>
+                                    <a class="btn btn-success" href="{% url 'newsletter:newsletter_toggle_activity' object.pk %}">Включить</a>
                                 {% endif %}
                             {% endif %}
                         </div>

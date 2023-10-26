@@ -23,8 +23,8 @@ urlpatterns = [
     path('message/create/', MessageCreateView.as_view(), name='message_create'),
     path('message/<int:pk>/update/', MessageUpdateView.as_view(), name='message_update'),
     path('message/<int:pk>/delete/', MessageDeleteView.as_view(), name='message_delete'),
-    path('newsletter/<int:pk>/toggle_activity', toggle_activity, name='mailing_toggle_activity'),
-    path('logs/', LogListView.as_view(), name='logs'),
-    path('logs/<int:pk>/', get_mailing_logs, name='mailing_logs'),
+    path('newsletter/<int:pk>/toggle_activity', toggle_activity, name='newsletter_toggle_activity'),
+    path('log/', LogListView.as_view(), name='log'),
+    path('log/<int:pk>/', get_newsletter_log, name='newsletter_log'),
     path('contacts/', ContactsView.as_view(), name='contacts')
 ]
