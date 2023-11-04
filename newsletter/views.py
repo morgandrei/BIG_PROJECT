@@ -11,11 +11,6 @@ from newsletter.forms import NewsletterForm, MessageForm, ClientForm
 from newsletter.models import Newsletter, Message, Client, Log
 from newsletter.services import get_random_blog_article
 
-STATISTIC = {'all_newsletter': Newsletter.objects.count(),
-             'active_newsletter': Newsletter.objects.filter(is_active=True).count(),
-             'clients': Client.objects.all().values('email').distinct().count(),
-             'blog_list': get_random_blog_article(), }
-
 
 class UserQuerysetMixin:
     """Ограничивает список просматриваемых пользователем объектов, принадлежащими только текущему пользователю,
@@ -67,8 +62,15 @@ class LoginRequiredMessageMixin(LoginRequiredMixin):
 
 
 def index(request):
-    context = {**STATISTIC}
-    return render(request, 'newsletter/index.html', context=context)
+
+    return render(request, 'newsletter/index.html', context=
+    {
+        'all_newsletter': Newsletter.objects.count(),
+        'active_newsletter': Newsletter.objects.filter(is_active=True).count(),
+        'clients': Client.objects.all().values('email').distinct().count(),
+        'blog_list': get_random_blog_article()
+    }
+                  )
 
 
 class ContactsView(TemplateView):
