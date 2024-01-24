@@ -4,7 +4,7 @@ from newsletter.services import my_job
 
 
 class Command(BaseCommand):
-    help = "Run Mailings"
+    help = "Run Newsletter"
 
     def handle(self, *args, **options):
         my_job()

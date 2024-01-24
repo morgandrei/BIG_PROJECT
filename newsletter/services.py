@@ -58,37 +58,38 @@ def my_job():
     today = datetime.datetime.now()
     time_now = today.strftime('%H:%M')
     date_today = today.date()
-    newsletter_today = Newsletter.objects.filter(start_date=date_today, is_active=True, status=Newsletter.STATUS_CHOICES[0])
-
+    newsletter_today = Newsletter.objects.filter(start_date=date_today, is_active=True, status=Newsletter.Status.CREATED)
+    print(newsletter_today)
     for newsletter in newsletter_today:
         newsletter_time = newsletter.time.strftime('%H:%M')
         print(newsletter)
+        print(newsletter_time)
 
         if newsletter_time <= time_now:
-            newsletter.status = newsletter.STATUS_CHOICES[1]
+            newsletter.status = Newsletter.Status.RUNNING
             newsletter.save()
 
             clients = newsletter.clients.all()
             recipient_list = [client.email for client in clients]
             try:
-                response = send_mail(newsletter.message.subject, newsletter.message.body, settings.EMAIL_HOST_USER,
+                response = send_mail(newsletter.message.subject, newsletter.message.content, settings.EMAIL_HOST_USER,
                                      recipient_list)
                 if response:
-                    log = Log(newsletter=newsletter, status=Log.STATUS_LOG[1], server_response=response)
-                else:
                     log = Log(newsletter=newsletter, status=Log.STATUS_LOG[0], server_response=response)
+                else:
+                    log = Log(newsletter=newsletter, status=Log.STATUS_LOG[1], server_response=response)
                 log.save()
             except Exception as response:
-                log = Log(newsletter=newsletter, status=Log.STATUS_LOG[0], server_response=response)
+                log = Log(newsletter=newsletter, status=Log.STATUS_LOG[1], server_response=response)
                 log.save()
 
-            if newsletter.frequency == Newsletter.FREQUENCY_CHOICES[0]:
+            if newsletter.frequency == Newsletter.Frequency.DAILY:
                 newsletter.start_date = date_today + datetime.timedelta(days=1)
-            elif newsletter.frequency == Newsletter.FREQUENCY_CHOICES[1]:
+            elif newsletter.frequency == Newsletter.Frequency.WEEKLY:
                 newsletter.start_date = date_today + datetime.timedelta(days=7)
-            elif newsletter.frequency == Newsletter.FREQUENCY_CHOICES[2]:
+            elif newsletter.frequency == Newsletter.Frequency.MONTHLY:
                 days_in_month = calendar.monthrange(today.year, today.month)[1]
                 newsletter.start_date = date_today + datetime.timedelta(days=days_in_month)
 
-            newsletter.status = newsletter.STATUS_CHOICES[0]
+            newsletter.status = newsletter.Status.CREATED
             newsletter.save()

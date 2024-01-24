@@ -17,9 +17,7 @@
                 {% for object in object_list %}
                     <tr>
                         <th scope="row">{{ object.pk }}</th>
-                        <td>
-                            <a href="{% url 'newsletter:newsletter_log' object.newsletter_id %}">{{ object.newsletter.name }}({{ object.newsletter_id }})</a>
-                        </td>
+                        <td>{{ object.newsletter.name }}({{ object.newsletter_id }})</td>
                         <td>{{ object.datetime }}</td>
                         <td>{{ object.get_status_display }}</td>
                     </tr>

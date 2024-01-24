@@ -12,7 +12,6 @@ from newsletter.models import Newsletter, Message, Client, Log
 from newsletter.services import get_random_blog_article
 
 
-
 class UserQuerysetMixin:
     """Ограничивает список просматриваемых пользователем объектов, принадлежащими только текущему пользователю,
      и сохраняет доступ для персонала"""
@@ -63,7 +62,6 @@ class LoginRequiredMessageMixin(LoginRequiredMixin):
 
 
 def index(request):
-
     return render(request, 'newsletter/index.html', context=
     {
         'all_newsletter': Newsletter.objects.count(),
